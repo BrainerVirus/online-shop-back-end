@@ -45,7 +45,7 @@ suite("#Functional tests", function () {
       test("Get all categories with query string", function (done) {
         chai
           .request(server)
-          .get("/categories/?id,name")
+          .get("/categories/?id&name")
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.isArray(res.body.categories);
@@ -68,7 +68,7 @@ suite("#Functional tests", function () {
       test("Get categories with wrong query string", function (done) {
         chai
           .request(server)
-          .get("/categories/?id,name,invalid")
+          .get("/categories/?id&name&invalid")
           .end(function (err, res) {
             assert.equal(res.status, 500);
             assert.equal(res.body.message, "Error 500 - Internal error");
@@ -209,7 +209,7 @@ suite("#Functional tests", function () {
       test("Get all products with query string", function (done) {
         chai
           .request(server)
-          .get("/products/?id,name,price,discount,category")
+          .get("/products/?id&name&price&discount&category")
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.isArray(res.body.products);
@@ -238,7 +238,7 @@ suite("#Functional tests", function () {
       test("Get products with wrong query string", function (done) {
         chai
           .request(server)
-          .get("/products/?id,name,invalid")
+          .get("/products/?id&name&invalid")
           .end(function (err, res) {
             assert.equal(res.status, 500);
             assert.equal(res.body.message, "Error 500 - Internal error");
