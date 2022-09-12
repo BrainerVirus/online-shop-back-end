@@ -95,6 +95,36 @@ export const getProductById = async (req, res) => {
     });
 };
 
+export const getProductsThroughSearchBar = async (req, res) => {
+  const productObj = {};
+  const searchInput = req.params.searchInput.toLowerCase();
+  let rowArr = [];
+  await db
+    .promise()
+    .execute(
+      `SELECT id, name, url_image, price, discount, category
+      FROM product`
+    )
+    .then(([rows]) => {
+      rows.forEach((row) => {
+        const rowName = row.name.toLowerCase();
+        if (rowName.includes(searchInput)) {
+          rowArr.push(row);
+        }
+      });
+      if (rowArr.length === 0)
+        return res
+          .status(404)
+          .json({ message: "Error 404 - Product not found" });
+      productObj.products = rowArr;
+      console.log(productObj);
+      res.json(productObj);
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Error 500 - Internal error" });
+    });
+};
+
 export const createProduct = async (req, res) => {
   const ProductExist = req.ProductExist;
   if (ProductExist)

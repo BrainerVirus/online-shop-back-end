@@ -7,6 +7,7 @@ import {
   updateProduct,
   checkProductExistenceById,
   checkProductExistenceByName,
+  getProductsThroughSearchBar,
 } from "../controllers/ProductController.js";
 
 import {
@@ -18,6 +19,7 @@ const productRouter = express.Router();
 
 productRouter.get("/", handleURLGetQueries, getProducts);
 productRouter.get("/:id", getProductById);
+productRouter.get("/search/:searchInput", getProductsThroughSearchBar);
 productRouter.post("/create", checkProductExistenceByName, createProduct);
 productRouter.put(
   "/update/:id",

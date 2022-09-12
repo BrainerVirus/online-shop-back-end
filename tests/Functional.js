@@ -12,7 +12,7 @@ suite("#Functional tests", function () {
         chai
           .request(server)
           .post("/categories/create")
-          .send({ name: "test creation 2" })
+          .send({ name: "Testing Category" })
           .end(function (err, res) {
             assert.equal(res.status, 200);
             assert.equal(res.body.message, "Category created successfully");
