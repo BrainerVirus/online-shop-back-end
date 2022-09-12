@@ -1,4 +1,4 @@
-import db from "../db/db.js";
+import db from "../database/db.js";
 
 export const checkProductExistenceById = async (req, res, next) => {
   const info = {
