@@ -21,7 +21,7 @@ const handleQueryConditions = (req, query) => {
   let queryStrConditions = "";
   const queryConditionsArr = [];
   for (const [key, value] of Object.entries(query)) {
-    if (value) queryConditionsArr.push(`${key} = ${query[key]}`);
+    if (value) queryConditionsArr.push(`${key} = '${query[key]}'`);
   }
   queryStrConditions = queryConditionsArr.join(" and ");
   req.queryStrConditions = queryStrConditions;
