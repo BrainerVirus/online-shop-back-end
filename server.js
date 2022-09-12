@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 app.use("/products", productRouter);
 app.use("/categories", categoryRouter);
 
-db.connect((err) => {
+db.getConnection((err) => {
   if (err) {
     console.log(err);
   } else {

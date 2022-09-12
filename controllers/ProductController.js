@@ -8,9 +8,7 @@ export const checkProductExistenceById = async (req, res, next) => {
     return res.status(400).json({ message: "Error 400 - Missing parameter" });
   await db
     .promise()
-    .execute("SELECT id FROM product where id = ? and deleted_at IS NULL", [
-      info.id,
-    ])
+    .execute("SELECT id FROM product where id = ?", [info.id])
     .then(([rows]) => {
       if (rows.length === 0) {
         req.ProductExist = false;
@@ -34,9 +32,7 @@ export const checkProductExistenceByName = async (req, res, next) => {
     return res.status(400).json({ message: "Error 400 - Missing parameter" });
   await db
     .promise()
-    .execute("SELECT name FROM product where name = ? and deleted_at IS NULL", [
-      info.name,
-    ])
+    .execute("SELECT name FROM product where name = ?", [info.name])
     .then(([rows]) => {
       if (rows.length === 0) {
         req.ProductExist = false;
@@ -55,19 +51,25 @@ export const checkProductExistenceByName = async (req, res, next) => {
 export const getProducts = async (req, res) => {
   const productObj = {};
   const queryStr = req.queryStr;
+  const queryStrConditions = req.queryStrConditions;
   await db
     .promise()
     .execute(
       `SELECT ${
         queryStr || "id, name, url_image, price, discount, category"
-      } FROM product where deleted_at IS NULL`
+      } FROM product ${
+        queryStrConditions ? "where " + queryStrConditions : " "
+      } `
     )
-    .then(([rows, fields]) => {
+    .then(([rows]) => {
+      if (rows.length === 0)
+        return res
+          .status(404)
+          .json({ message: "Error 404 - Product not found" });
       productObj.products = rows;
       res.json(productObj);
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ message: "Error 500 - Internal error" });
     });
 };
@@ -77,10 +79,10 @@ export const getProductById = async (req, res) => {
   await db
     .promise()
     .execute(
-      "SELECT id, name, url_image, price, discount, category FROM product where id = ? and deleted_at IS NULL",
+      "SELECT id, name, url_image, price, discount, category FROM product where id = ?",
       [req.params.id]
     )
-    .then(([rows, fields]) => {
+    .then(([rows]) => {
       if (rows.length === 0)
         return res
           .status(404)
@@ -95,7 +97,6 @@ export const getProductById = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   const ProductExist = req.ProductExist;
-  console.log("ProductExist", ProductExist);
   if (ProductExist)
     return res.status(409).json({ message: "Error 409 - Conflict" });
   const info = {
@@ -104,7 +105,6 @@ export const createProduct = async (req, res) => {
     price: req.body.price,
     discount: req.body.discount,
     category: req.body.category,
-    created_at: new Date(),
   };
   if (
     !info.name ||
@@ -118,28 +118,19 @@ export const createProduct = async (req, res) => {
   await db
     .promise()
     .execute(
-      "INSERT INTO product (name, url_image, price, discount, category, created_at) VALUES (?,?, ?, ?, ?, ?)",
-      [
-        info.name,
-        info.url_image,
-        info.price,
-        info.discount,
-        info.category,
-        info.created_at,
-      ]
+      "INSERT INTO product (name, url_image, price, discount, category) VALUES (?, ?, ?, ?, ?)",
+      [info.name, info.url_image, info.price, info.discount, info.category]
     )
-    .then(([rows, fields]) => {
+    .then(() => {
       res.status(200).json({ message: "Product created successfully" });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ message: "Error 500 - Internal error" });
     });
 };
 
 export const updateProduct = async (req, res) => {
   const ProductExist = req.ProductExist;
-  console.log("ProductExist", ProductExist);
   if (!ProductExist)
     return res.status(404).json({ message: "Error 404 - Product not found" });
   const queryStr = req.queryStr;
@@ -147,19 +138,14 @@ export const updateProduct = async (req, res) => {
     return res.status(400).json({ message: "Error 400 - Bad request" });
   const info = {
     id: req.params.id,
-    updated_at: new Date(),
   };
   await db
     .promise()
-    .execute(`UPDATE product SET ${queryStr} updated_at = ? WHERE id = ?`, [
-      info.updated_at,
-      info.id,
-    ])
-    .then(([rows, fields]) => {
+    .execute(`UPDATE product SET ${queryStr} WHERE id = ?`, [info.id])
+    .then(() => {
       res.status(200).json({ message: "Product updated successfully" });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ message: "Error 500 - Internal error" });
     });
 };
@@ -170,19 +156,14 @@ export const deleteProduct = async (req, res) => {
     return res.status(404).json({ message: "Error 404 - Product not found" });
   const info = {
     id: req.params.id,
-    deleted_at: new Date(),
   };
   await db
     .promise()
-    .execute("UPDATE product SET deleted_at = ? WHERE id = ?", [
-      info.deleted_at,
-      info.id,
-    ])
-    .then(([rows, fields]) => {
+    .execute("DELETE FROM product WHERE id = ?", [info.id])
+    .then(() => {
       res.status(200).json({ message: "Product deleted successfully" });
     })
     .catch((err) => {
-      console.log(err);
       res.status(500).json({ message: "Error 500 - Internal error" });
     });
 };

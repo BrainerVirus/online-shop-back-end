@@ -8,9 +8,7 @@ export const checkCategoryExistenceById = async (req, res, next) => {
     return res.status(400).json({ message: "Error 400 - Missing parameter" });
   await db
     .promise()
-    .execute("SELECT id FROM category where id = ? and deleted_at IS NULL", [
-      info.id,
-    ])
+    .execute("SELECT id FROM category where id = ?", [info.id])
     .then(([rows]) => {
       if (rows.length === 0) {
         req.categoryExist = false;
@@ -34,9 +32,7 @@ export const checkCategoryExistenceByName = async (req, res, next) => {
     return res.status(400).json({ message: "Error 400 - Missing parameter" });
   await db
     .promise()
-    .execute("SELECT id FROM category where name = ? and deleted_at IS NULL", [
-      info.name,
-    ])
+    .execute("SELECT id FROM category where name = ?", [info.name])
     .then(([rows]) => {
       if (rows.length === 0) {
         req.categoryExist = false;
@@ -55,12 +51,19 @@ export const checkCategoryExistenceByName = async (req, res, next) => {
 export const getCategories = async (req, res) => {
   const categoryObj = {};
   const queryStr = req.queryStr;
+  const queryStrConditions = req.queryStrConditions;
   await db
     .promise()
     .execute(
-      `SELECT ${queryStr || "id, name"} FROM category where deleted_at IS NULL`
+      `SELECT ${queryStr || "id, name"} FROM category ${
+        queryStrConditions ? "where " + queryStrConditions : " "
+      } `
     )
-    .then(([rows, fields]) => {
+    .then(([rows]) => {
+      if (rows.length === 0)
+        return res
+          .status(404)
+          .json({ message: "Error 404 - Category not found" });
       categoryObj.categories = rows;
       res.json(categoryObj);
     })
@@ -73,11 +76,8 @@ export const getCategoryById = async (req, res) => {
   const categoryObj = {};
   await db
     .promise()
-    .execute(
-      "SELECT id, name FROM category where id = ? and deleted_at IS NULL",
-      [req.params.id]
-    )
-    .then(([rows, fields]) => {
+    .execute("SELECT id, name FROM category where id = ?", [req.params.id])
+    .then(([rows]) => {
       if (rows.length === 0)
         return res
           .status(404)
@@ -96,18 +96,14 @@ export const createCategory = async (req, res) => {
     return res.status(409).json({ message: "Error 409 - Conflict" });
   const info = {
     name: req.body.name,
-    created_at: new Date(),
   };
   if (!info.name) {
     return res.status(400).json({ message: "Error 400 - Missing parameter" });
   }
   await db
     .promise()
-    .execute("INSERT INTO category (name,created_at) VALUES (?,?)", [
-      info.name,
-      info.created_at,
-    ])
-    .then(([rows, fields]) => {
+    .execute("INSERT INTO category (name) VALUES (?,)", [info.name])
+    .then(() => {
       res.status(200).json({ message: "Category created successfully" });
     })
     .catch((err) => {
@@ -124,16 +120,12 @@ export const updateCategory = async (req, res) => {
     return res.status(400).json({ message: "Error 400 - Bad request" });
   const info = {
     id: req.params.id,
-    updated_at: new Date(),
   };
 
   await db
     .promise()
-    .execute(`UPDATE category SET ${queryStr} updated_at = ? WHERE id = ?`, [
-      info.updated_at,
-      info.id,
-    ])
-    .then(([rows, fields]) => {
+    .execute(`UPDATE category SET ${queryStr} WHERE id = ?`, [info.id])
+    .then(() => {
       res.status(200).json({ message: "Category updated successfully" });
     })
     .catch((err) => {
@@ -147,15 +139,11 @@ export const deleteCategory = async (req, res) => {
     return res.status(404).json({ message: "Error 404 - Category not found" });
   const info = {
     id: req.params.id,
-    deleted_at: new Date(),
   };
   await db
     .promise()
-    .execute("UPDATE category SET deleted_at = ? WHERE id = ?", [
-      info.deleted_at,
-      info.id,
-    ])
-    .then(([rows, fields]) => {
+    .execute("DELETE FROM category WHERE id = ?", [info.id])
+    .then(() => {
       res.status(200).json({ message: "Category deleted successfully" });
     })
     .catch((err) => {
