@@ -25,8 +25,7 @@ npm run test
 *Nota: Para correr los test se recomienda cambiar los valores de prueba existentes debido a los datos impredecibles de la base de datos al ser de acceso de muchos*
 
 ## Estuctura de las respuestas
-Primero que nada se debe saber que las respuestas están en formato json, y sus parámetros cambian en función de la request del cliente (más detalles al respecto
-en más adelante) puesto que los endpoints trabajan bajo una estructura de queries dinámicas.
+Primero que nada se debe saber que las respuestas están en formato json, y sus parámetros cambian en función de la request del cliente (más detalles al respecto un poco más adelante ) puesto que los endpoints trabajan bajo una estructura de queries dinámicas.
 
 ```
 //Respuesta json con todos los campos de un producto
