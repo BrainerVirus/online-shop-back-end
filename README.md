@@ -87,7 +87,7 @@ punto anterior, es que al informar el valor este actua de filtro, de no dar ning
 {"id":6,"name":"cerveza"},{"id":7,"name":"vodka"}]}
 ```
 
-#POST categories
+## POST categories
 Al enviar una request post `/categories/create` retornará `{ message: "Category created successfully" }` al momento de crear de forma satisfacotia
 una categoria al entregarle un json con los parametrós necesarios
 
@@ -96,7 +96,7 @@ una categoria al entregarle un json con los parametrós necesarios
 {name: "hogar"}
 ```
 
-#PUT categories
+## PUT categories
 Al enviar un request put `/categories/update/:id` se tiene que tener encuenta la construcción de query para la actualización
 dinámica, es decir, por medio de las query podemos decirle a la api que parametros actualizar, respecto a que registro.
 
@@ -106,7 +106,7 @@ dinámica, es decir, por medio de las query podemos decirle a la api que paramet
 ```
 *Nota: El ejemplo anterior define la actualización del campo nombre de la categoria con el id 4*
 
-#DELETE categories
+## DELETE categories
 al enviar un request delete `/categories/delete/:id` de existir el registro este se eliminará y dará como respueta
 `{ message: "Category deleted successfully" }`
 
@@ -145,7 +145,7 @@ por ejemplo al consultar `/products/search/pisco alto del carmen` se retornará 
 ```
 
 
-#POST products
+## POST products
 Al enviar una request post `/products/create` retornará `{ message: "Product created successfully" }` al momento de crear de forma satisfacotia
 un producto al entregarle un json con los parametrós necesarios
 
@@ -158,7 +158,7 @@ un producto al entregarle un json con los parametrós necesarios
 "category": 2}
 ```
 
-#PUT products
+## PUT products
 Al enviar un request put `/products/update/:id` se tiene que tener encuenta la construcción de query para la actualización
 dinámica, es decir, por medio de las query podemos decirle a la api que parametros actualizar, respecto a que registro.
 
@@ -168,7 +168,7 @@ dinámica, es decir, por medio de las query podemos decirle a la api que paramet
 ```
 *Nota: El ejemplo anterior define la actualización del campo nombre , y categoria del producto con el id 5*
 
-#DELETE products
+## DELETE products
 al enviar un request delete `/products/delete/:id` de existir el registro este se eliminará y dará como respueta
 `{ message: "Product deleted successfully" }`
 
