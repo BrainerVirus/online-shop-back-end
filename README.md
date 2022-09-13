@@ -1,5 +1,5 @@
 # Noir online shop - Back End
-Este es el repositorio del apartado back end de "nori online shop web app".
+Este es el repositorio del apartado back end de "noir online shop web app".
 
 <a href="https://github.com/BrainerVirus/online-shop-front-end.git">Presiona aqui para ir al repositorio del Front-End</a>
 
