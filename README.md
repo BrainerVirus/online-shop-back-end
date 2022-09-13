@@ -61,7 +61,7 @@ name: "Pisco",
 <li><b>name<b/>Nombre de la categoria</li>
 </ul>
 
-## GET categorias
+## GET categories
 `/categories/` retornará  un objeto con una key `categories` y como valor un array con todas las categorias, con todos sus respectivos atributos
 ```
 //ejemplo
